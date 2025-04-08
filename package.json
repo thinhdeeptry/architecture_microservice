@@ -1,0 +1,17 @@
+{
+  "name": "sales-management-microservices",
+  "version": "1.0.0",
+  "description": "Sales Management System using Microservices Architecture",
+  "scripts": {
+    "start:product": "cd product-service && npm run start",
+    "start:product:dev": "cd product-service && npm run start:dev",
+    "start:order": "cd order-service && npm run start",
+    "start:order:dev": "cd order-service && npm run start:dev",
+    "start:customer": "cd customer-service && npm run start",
+    "start:customer:dev": "cd customer-service && npm run start:dev",
+    "start:gateway": "cd api-gateway && npm run start",
+    "start:gateway:dev": "cd api-gateway && npm run start:dev"
+  },
+  "author": "",
+  "license": "ISC"
+}
