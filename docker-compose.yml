@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb-product:27017/product-service
+      - MONGODB_HOST=mongodb-product
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=product-service
+      - PORT=3000
+    depends_on:
+      - mongodb-product
+    networks:
+      - microservices-network
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGODB_URI=mongodb://mongodb-order:27017/order-service
+      - MONGODB_HOST=mongodb-order
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=order-service
+      - PRODUCT_SERVICE_URL=http://product-service:3000/api
+      - PORT=3001
+    depends_on:
+      - mongodb-order
+      - product-service
+    networks:
+      - microservices-network
+
+  mongodb-product:
+    image: mongo:latest
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongodb_product_data:/data/db
+    networks:
+      - microservices-network
+
+  mongodb-order:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_order_data:/data/db
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  mongodb_product_data:
+  mongodb_order_data:
