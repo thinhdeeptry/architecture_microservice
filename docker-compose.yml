@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - PRODUCT_SERVICE_URL=http://product-service:3000/api
+      - ORDER_SERVICE_URL=http://order-service:3001/api
+      - CUSTOMER_SERVICE_URL=http://customer-service:3003/api
+    depends_on:
+      - product-service
+      - order-service
+      - customer-service
+    networks:
+      - microservices-network
+
   product-service:
     build:
       context: ./product-service
@@ -37,6 +55,23 @@ services:
     networks:
       - microservices-network
 
+  customer-service:
+    build:
+      context: ./customer-service
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGODB_URI=mongodb://mongodb-customer:27017/customer-service
+      - MONGODB_HOST=mongodb-customer
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=customer-service
+      - PORT=3003
+    depends_on:
+      - mongodb-customer
+    networks:
+      - microservices-network
+
   mongodb-product:
     image: mongo:latest
     ports:
@@ -55,6 +90,15 @@ services:
     networks:
       - microservices-network
 
+  mongodb-customer:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    volumes:
+      - mongodb_customer_data:/data/db
+    networks:
+      - microservices-network
+
 networks:
   microservices-network:
     driver: bridge
@@ -62,3 +106,4 @@ networks:
 volumes:
   mongodb_product_data:
   mongodb_order_data:
+  mongodb_customer_data:
