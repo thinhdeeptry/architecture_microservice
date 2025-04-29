@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  product-service:
+    image: ${DOCKER_USERNAME}/product-service:latest
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/product-service
+    depends_on:
+      - mongodb
+
+  order-service:
+    image: ${DOCKER_USERNAME}/order-service:latest
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/order-service
+      - PRODUCT_SERVICE_URL=http://product-service:3001
+    depends_on:
+      - mongodb
+      - product-service
+
+  customer-service:
+    image: ${DOCKER_USERNAME}/customer-service:latest
+    restart: always
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/customer-service
+    depends_on:
+      - mongodb
+
+  api-gateway:
+    image: ${DOCKER_USERNAME}/api-gateway:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PRODUCT_SERVICE_URL=http://product-service:3001
+      - ORDER_SERVICE_URL=http://order-service:3002
+      - CUSTOMER_SERVICE_URL=http://customer-service:3003
+    depends_on:
+      - product-service
+      - order-service
+      - customer-service
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
