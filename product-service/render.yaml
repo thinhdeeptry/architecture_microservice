@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: product-service
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        fromDatabase:
+          name: product-db
+          property: connectionString
+
+databases:
+  - name: product-db
+    databaseName: product-service
+    plan: free
