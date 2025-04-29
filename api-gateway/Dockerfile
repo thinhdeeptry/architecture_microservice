@@ -8,8 +8,8 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npx tsc
 
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+CMD ["npm", "run", "start:prod"]

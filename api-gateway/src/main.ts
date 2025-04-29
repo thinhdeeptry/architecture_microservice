@@ -11,6 +11,7 @@ async function bootstrap() {
 
   const port = configService.get<number>('PORT', 3000);
   await app.listen(port);
-  console.log(`API Gateway is running on: ${await app.getUrl()}`);
+  console.log(`API Gateway is running o1n: ${await app.getUrl()}`);
+  
 }
 bootstrap();
